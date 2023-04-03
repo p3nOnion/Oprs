@@ -38,7 +38,7 @@ function get_connect_info() {
 
 function get_term_size() {
     var init_width = 9;
-    var init_height = 17;
+    var init_height = 16;
 
     var windows_width = $(window).width();
     var windows_height = $(window).height();
@@ -222,7 +222,7 @@ function websocket() {
         term.open(document.getElementById('terminal'));
 		term.focus();
 		$("body").attr("onbeforeunload",'checkwindow()');//Tăng thuộc tính dấu nhắc đóng refresh
-		
+
     });
 
     // Đọc dữ liệu được gửi bởi máy chủ và ghi nó vào thiết bị đầu cuối web

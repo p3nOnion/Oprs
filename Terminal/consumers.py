@@ -71,7 +71,6 @@ class WebSSH(WebsocketConsumer):
     trạng thái:
         0: kết nối ssh bình thường, websocket bình thường
         1: Đã xảy ra lỗi không xác định, đóng kết nối ssh và websocket
-
     tin nhắn:
         Khi trạng thái là 1, thông báo là thông báo lỗi cụ thể
         Khi trạng thái là 0, thông báo là dữ liệu do ssh trả về và trang đầu cuối sẽ lấy dữ liệu do ssh trả về và ghi vào trang đầu cuối

@@ -21,7 +21,7 @@ class SSH:
         self.res = ''
         self.zmodem = False
         self.zmodemOO = False
-    
+
     # term có thể dùng ansi, linux, vt100, xterm, dump, tất cả đều có hiển thị màu trừ dump
     def connect(self, host, user, password=None, ssh_key=None, port=22, timeout=30,
                 term='ansi', pty_width=80, pty_height=24):

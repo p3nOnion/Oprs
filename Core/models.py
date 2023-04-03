@@ -11,5 +11,7 @@ class Exploit(models.Model):
     rport = models.IntegerField()
     lhost =models.CharField(max_length=200, default=None)
     lport = models.IntegerField(default=None)
+    def __str__(self):
+        return self.name
 
 

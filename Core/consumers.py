@@ -1,4 +1,5 @@
 import json
+import threading
 import time
 
 from channels.generic.websocket import WebsocketConsumer
@@ -9,7 +10,6 @@ class Console(WebsocketConsumer):
 
     def connect(self):
         self.accept()
-        query_string = self.scope.get('query_string')
         self.client = views.client
         self.console = views.console()
         self.console.read()
@@ -26,21 +26,38 @@ class Console(WebsocketConsumer):
 
 class Session(WebsocketConsumer):
     message = {'status': 0, 'message': None}
+
     def connect(self):
         self.accept()
-        query_string = self.scope.get('query_string')
+        self.id = self.scope['url_route']['kwargs']['id']
         self.client = views.client
-        self.session, data = views.run_session(1)
+        self.session, data, self.cid =views.run_session(self.id)
         if  self.session is None:
             self.send(json.dumps({'data':data, 'status': 0}))
-            self.close()
-        else: self.send(json.dumps({'data':data, 'status': 1}))
+        else:
+            self.send(json.dumps({'data':data, 'status': 1}))
+
 
     def disconnect(self, code):
+        self.session.write("background")
         del self.session
         pass
     def receive(self, text_data=None, bytes_data=None):
+
         if self.session is not None:
+            print(text_data)
             self.session.write(text_data)
-            self.send(json.dumps(self.session.read()))
-        pass
+            timeout= time.time() + 10
+            while True:
+
+                if time.time() > timeout:
+                    self.send(json.dumps({"data":"Time out","status":0}))
+                    break
+                data = self.session.read()
+                print(data)
+                time.sleep(0.2)
+                if data['data'] != "":
+                    self.send(json.dumps({"data":data['data'],"status":1}))
+                    break
+        else:
+            self.send(json.dumps({"data": self.session.read()['data'], "status": 0}))

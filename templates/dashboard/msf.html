@@ -19,27 +19,22 @@
     </head>
     <body>
         <div class="container mt-3 p-5">
-            <h2>django-channels-chat</h2>
+            <h2>Terminal</h2>
             <div class="row">
                 <div class="col-12 col-md-8">
                     <div class="mb-2">
-                        <label for="chatLog">Room: #{{ room.name }}</label>
-                        <textarea class="form-control" id="chatLog" readonly></textarea>
+                        <label for="chatLog">Session: #<label id="id">{{ id }}</label></label>
+                        <textarea class="form-control bg-dark text-white" id="chatLog" readonly></textarea>
                     </div>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="chatMessageInput" placeholder="Enter your chat message">
+                        <input type="text" class="form-control bg-dark text-white" id="chatMessageInput" placeholder="Enter your chat message">
                         <div class="input-group-append">
-                            <button class="btn btn-success" id="chatMessageSend" type="button">Send</button>
+                            <button class="btn btn-success" id="chatMessageSend" type="button" >Send</button>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="onlineUsers">Online users</label>
-                    <select multiple class="form-control" id="onlineUsersSelector">
-                    </select>
-                </div>
             </div>
-            {{ room.name|json_script:"roomName" }}
+            {{ id|json_script:"roomName" }}
+        </div>
         </div>
         <script src="{% static 'room.js' %}"></script>
     </body>

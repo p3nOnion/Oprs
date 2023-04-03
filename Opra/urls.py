@@ -26,3 +26,6 @@ urlpatterns = [
     path('terminal/', include('Terminal.urls'), name='Terminal'),
 ]
 
+admin.site.site_header = "OPRA Admin"
+admin.site.site_title = "OPRA Admin Portal"
+admin.site.index_title = "Welcome to OPRA Researcher Portal"
