@@ -38,7 +38,7 @@ function get_connect_info() {
 
 function get_term_size() {
     var init_width = 9;
-    var init_height = 16;
+    var init_height = 18;
 
     var windows_width = $(window).width();
     var windows_height = $(window).height();

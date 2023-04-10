@@ -30,7 +30,13 @@
                 {#              <p>SHOW LOG</p>#}
                 {#            </a>#}
                 {#          </li>#}
-                <li>
+
+            {% if session.type == "shell"  %}
+                <li class="active ">
+                    <i class="tim-icons icon-compass-05"></i>
+                    <a href="/oprs/meterpreter/{{ id }}">shell_to_meterpreter</a>
+                </li>
+            {% endif %}
                     {#            <a href="/ui-notifications.html">#}
                     {#              <i class="tim-icons icon-bell-55"></i>#}
                     {#              <p>Notifications</p>#}

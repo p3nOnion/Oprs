@@ -1,12 +1,26 @@
-// chat/static/room.js
+{% load static %}
+<div style="background-color:black">
+            <h2>OUTPUT</h2>
+            <div  style="width: 800px; height: 500px">
 
-console.log("Sanity check from room.js.");
+                        <label for="chatLog"><label id="id"></label></label>
+                        <textarea style="width: 100%; height: 100%" class="bg-dark text-white" id="chatLog" readonly></textarea>
+
+{#                    <div class="input-group">#}
+{#                        <input type="text" class="form-control bg-dark text-white" id="chatMessageInput" placeholder="Enter your chat message">#}
+{#                        <div class="input-group-append">#}
+{#                            <button class="btn btn-success" id="chatMessageSend" type="button" >Send</button>#}
+{#                        </div>#}
+{#                    </div>#}
+            </div>
+</div>
+ <script>console.log("Sanity check from room.js.");
 let chatLog = document.querySelector("#chatLog");
 let chatMessageInput = document.querySelector("#chatMessageInput");
 let chatMessageSend = document.querySelector("#chatMessageSend");
-let socket = new WebSocket("ws://"+document.location.host+"/ws/session/"+ document.querySelector("#id").textContent);
+let socket = new WebSocket("ws://"+document.location.host+"/ws/message/"+ document.querySelector("#id").textContent);
 socket.onmessage = (event) => {
-  chatLog.value+=JSON.parse(event.data)['data']
+  chatLog.value+=JSON.parse(event.data)['message']+'\n'
 };
 // socket.onclose = function(event) {
 //   if (event.wasClean) {
@@ -35,7 +49,7 @@ chatMessageSend.onclick = function() {
     // TODO: forward the message to the WebSocket
     else {
         chatLog.value+=">> "+chatMessageInput.value+"\n";
-        socket.send(chatMessageInput.value);
+        socket.send(JSON.stringify({'message':chatMessageInput.value}));
     }
     chatMessageInput.value = "";
-};
+};</script>

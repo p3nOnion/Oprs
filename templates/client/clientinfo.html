@@ -51,27 +51,27 @@
             var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
 
             chart.draw(data, options);
-            setInterval(clientInfo, 2000);
+            setInterval(clientInfo, 20000);
 
             function clientInfo() {
-                {# var token ="{{ csrf_token }}";#}
-                {#      $.ajax({#}
-                {#    headers: {"X-CSRFToken": token},#}
-                {#    dataType: "JSON",#}
-                {#    url: '{% url   'client_info'  ip  %}',#}
-                {#    type: 'POST',#}
-                {#    data: {"ip":ip},#}
-                {#    success: function(datax){#}
-                {#                data.setValue(0, 1, datax['ram']);#}
-                {#                 data.setValue(1, 1, datax['cpu']);#}
-                {#                     data.setValue(2, 1, datax['disk']);#}
-                {#                chart.draw(data, options);#}
-                {#                console.log(data['ram'])#}
-                {#            }#}
-                {##}
-                {#    }#}
-                {#    )#}
-                {##}
+                 var token ="{{ csrf_token }}";
+                      $.ajax({
+                    headers: {"X-CSRFToken": token},
+                    dataType: "JSON",
+                    url: '/oprs/info/'+ip,
+                    type: 'POST',
+                    data: {"id":{{ id }}},
+                    success: function(datax){
+                                data.setValue(0, 1, datax['ram']);
+                                 data.setValue(1, 1, datax['cpu']);
+                                     data.setValue(2, 1, datax['disk']);
+                                chart.draw(data, options);
+                                console.log(data['ram'])
+                            }
+
+                    }
+                    )
+
             }
         }
 
@@ -171,25 +171,26 @@
                         </div>
                     </div>
                     <table class="table table-striped table-bordered dt-responsive nowrap">
-                        <thead>
-                        <tr>
-                            <th> Name</th>
-
-                            <th> Flags</th>
-
-                            <th> Operstate</th>
-
-
-                        </tr>
-                        </thead>
+{#                        <thead>#}
+{#                        <tr>#}
+{#                            <th> Name</th>#}
+{##}
+{#                            <th> Flags</th>#}
+{##}
+{#                            <th> Operstate</th>#}
+{##}
+{##}
+{#                        </tr>#}
+{#                        </thead>#}
                         <tbody>
                         {% for network in  system_network %}
-                            <td> {{ network.ifname }} </td>
 
-                            <td> {{ network.flags }} </td>
+{#                            <td> {{ network.ifname }} </td>#}
 
-                            <td> {{ network.operstate }} </td>
-                            {% for addr in network.addr_info %}
+{#                            <td> {{ network.flags }} </td>#}
+
+{#                            <td> {{ network.operstate }} </td>#}
+{#                            {% for addr in network.addr_info %}#}
                                 <td> Network Card
                                 <table>
 
@@ -198,11 +199,11 @@
                                         <td> Ip</td>
                                         <td> Scope</td>
                                     </tr>
-                                    <td> {{ addr.label }} </td>
+                                    <td>{{ network }} {{ addr.label }} </td>
                                     <td> {{ addr.local }}</td>
                                     <td> {{ addr.scope }}</td>
                                 </table>
-                            {% endfor %}
+{#                            {% endfor %}#}
                         </td>
 
                             </tbody>
