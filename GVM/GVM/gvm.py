@@ -19,3 +19,15 @@ with Gmp(connection=connection) as gmp:
         gmp.authenticate(username, password)
         response = gmp.get_tasks()
         return response
+    def get_task(id):
+        gmp.authenticate(username, password)
+        response = gmp.get_task(task_id=id)
+        return response
+    def get_results():
+        gmp.authenticate(username, password)
+        response = gmp.get_results()
+        return response
+    def get_result(id):
+        gmp.authenticate(username, password)
+        response = gmp.get_result(result_id=id)
+        return response
