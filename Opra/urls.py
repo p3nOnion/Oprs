@@ -24,6 +24,7 @@ urlpatterns = [
     path('oprs/', include('Core.urls'), name='Core'),
     path('accounts/', include('Users.urls'), name='Users'),
     path('terminal/', include('Terminal.urls'), name='Terminal'),
+    path('gvm/', include('GVM.urls'), name='Gvm'),
 ]
 
 admin.site.site_header = "OPRA Admin"

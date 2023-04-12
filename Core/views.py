@@ -89,7 +89,9 @@ class Main(View):
         module = Exploit.objects.all()
         exploits= client.modules.exploits
         exploits.insert(0, '')
-        return render(request, "dashboard/index.html", {"username": username, "exploits": exploits})
+        version = gvm.get_tasks()
+        
+        return render(request, "dashboard/index.html", {"username": username, "exploits": exploits,"version":version})
 
     def post(self, request, **kwargs):
         host = request.POST['ip']

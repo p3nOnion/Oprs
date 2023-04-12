@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'channels',
     'Terminal',
     'Users',
-    'Core'
+    'Core',
+    "GVM"
 ]
 
 MIDDLEWARE = [
