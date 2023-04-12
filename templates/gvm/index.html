@@ -1,2 +1,12 @@
 {% load static %}
-{{response}}
+
+
+<label for="cars">Choose a task:</label>
+
+<select id="cars">
+    {% load static %}
+    {%for task in tasks_id%}
+
+    <option value="{{task.id}}">{{task.name}}</option>
+    {%endfor%}
+</select>
