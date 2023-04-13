@@ -1,0 +1,21 @@
+{%if targets%}
+{{targets}}
+{%else%}
+<label for="create_target">Creat Target</label>
+<form id="create_target" method="post">
+    {%csrf_token%}
+    <label for="name">name:</label><br>
+    <input type="text" id="name" name="name" required><br>
+    <label for="comment">comment:</label><br>
+    <input type="text" id="comment" name="comment"><br>
+    <label for="hosts">hosts:</label><br>
+    <input type="text" id="hosts" name="hosts" required><br>
+    <label for="port_lists">port_lists</label><br>
+    <select id="port_lists" name="port_lists" selected required>
+        {% for child in port_lists%}
+        <option value="{{child.id}}">{{child.name}}</option>
+        {%endfor%}
+    </select>
+    <input type="submit" name="create_target" value="Create Target">
+</form>
+{%endif%}
