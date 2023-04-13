@@ -67,9 +67,9 @@ class Tasks(View):
 class Result(View):
     def get(self, request, id):
         response = gvm.get_result(id)
-        response = xmltodict.parse(response)
+        # response = xmltodict.parse(response)
         print(type(response))
-        response = response["get_results_response"]
+        # response = response["get_results_response"]
 
         return render(request, 'gvm/result.html', {'response': response})
 
@@ -79,6 +79,19 @@ class Results(View):
         response = gvm.get_results()
         response = xmltodict.parse(response)
         return render(request, 'gvm/index.html', {'response': response})
+
+
+class GetResultByTask(View):
+    def get(self, request, id):
+        response = gvm.get_task(id=id)
+        response = ET.fromstring(response)
+        report = response.find('task').find("last_report").find('report')
+        response = gvm.get_report(id=report.attrib['id'])
+        response = ET.fromstring(response).find('report').find(
+            'report').find('results').findall('result')
+        response = [child.attrib for child in response]
+
+        return render(request, 'gvm/result.html', {'response': response})
 
 
 class Report(View):

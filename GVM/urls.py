@@ -12,4 +12,6 @@ urlpatterns = [
     path('result/<str:id>', login_required(views.Result.as_view())),
     path('results/', login_required(views.Results.as_view())),
     path('report/<str:id>', login_required(views.Report.as_view())),
+    path('get_result_by_task/<str:id>',
+         login_required(views.GetResultByTask.as_view())),
 ]
