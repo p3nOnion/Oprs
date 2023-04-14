@@ -33,6 +33,44 @@
   <!-- Specific Page CSS goes HERE  -->
   {% block stylesheets %}{% endblock stylesheets %}
 
+  <style>
+    .disabled{
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    
+    .header{
+      font-size: 20px;
+      font-weight: bold;
+      color: wheat;
+    };
+
+ 
+  
+
+    .target-item{
+     border: '1px solid white';
+    }
+    .card{
+      font-size: 15px;
+    }
+    
+    #icon {
+      font-size: 20px;
+      font-weight: bold;
+      font-family:  "Poppins", sans-serif;
+    }
+    form label{
+      font-size: 15px;
+      font-weight: bold;
+      font-family:  "Poppins", sans-serif;
+      color: wheat;
+    }
+   
+
+
+  </style>
+
 </head>
 
 <body class="">
@@ -63,7 +101,9 @@
   {% include 'includes/scripts-sidebar.html' %}
 
   <!-- Specific Page JS goes HERE  -->
-  {% block javascripts %}{% endblock javascripts %}
+  {% block javascripts %}
+  
+  {% endblock javascripts %}
 
 </body>
 

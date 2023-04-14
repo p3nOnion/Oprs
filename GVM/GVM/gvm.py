@@ -8,7 +8,7 @@ import gvm
 from bs4 import BeautifulSoup
 path = '/run/gvmd/gvmd.sock'
 username = "admin"
-password = "admin"
+password = "71639dc5-2418-4a6c-8cb3-31a621623aa2"
 # SSHConnection(path=path)  # UnixSocketConnection(path=path)
 connection = gvm.connections.UnixSocketConnection(path=path)
 with Gmp(connection=connection) as gmp:
@@ -71,3 +71,7 @@ with Gmp(connection=connection) as gmp:
         gmp.authenticate(username, password)
         gmp.create_target(name=name, hosts=hosts,
                           comment=comment, port_list_id=port_list_id)
+
+    def delete_target(id):
+        gmp.authenticate(username, password)
+        gmp.delete_target(id)
