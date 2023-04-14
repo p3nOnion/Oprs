@@ -3,17 +3,16 @@
 
 <!-- Static assets -->
 {% load static %}
-<script
-  src="https://code.jquery.com/jquery-3.5.1.js"
-  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
   crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
-  <link rel="icon" type="image/png"          href="{% static 'assets/img/favicon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">
 
   <title>
     Django Dashboard Black - {% block title %}{% endblock %} | AppSeed
@@ -32,6 +31,45 @@
 
   <!-- Specific Page CSS goes HERE  -->
   {% block stylesheets %}{% endblock stylesheets %}
+
+  <style>
+    .disabled {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .header {
+      font-size: 20px;
+      font-weight: bold;
+      color: wheat;
+    }
+
+    ;
+
+
+
+
+    .target-item {
+      border: '1px solid white';
+    }
+
+    .card {
+      font-size: 15px;
+    }
+
+    #icon {
+      font-size: 20px;
+      font-weight: bold;
+      font-family: "Poppins", sans-serif;
+    }
+
+    form label {
+      font-size: 15px;
+      font-weight: bold;
+      font-family: "Poppins", sans-serif;
+      color: wheat;
+    }
+  </style>
 
 </head>
 
@@ -53,7 +91,7 @@
       {% include 'includes/footer.html' %}
 
     </div>
-    
+
   </div>
 
   {% include 'includes/fixed-plugin.html' %}
@@ -63,7 +101,9 @@
   {% include 'includes/scripts-sidebar.html' %}
 
   <!-- Specific Page JS goes HERE  -->
-  {% block javascripts %}{% endblock javascripts %}
+  {% block javascripts %}
+
+  {% endblock javascripts %}
 
 </body>
 

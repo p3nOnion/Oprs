@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 
 class Index(View):
     def get(self, request):
+        targets = gvm.get_targets()
+         
         response = gvm.get_tasks()
         xml_tree = ET.fromstring(response)
         tasks = xml_tree.findall(".//task")
@@ -21,17 +23,32 @@ class Index(View):
 
 class Target(View):
     def get(self, request):
+        targets = gvm.get_targets()
+        print(xmltodict.parse(targets)) 
+        targets = ET.fromstring(targets).findall('target')
+        
+        targets = [{"name": child.find('name').text, "id": child.attrib['id'],
+        "hosts": child.find('hosts').text, "comment": child.find('comment').text,
+        "port_list": child.find('port_list').find('name').text,
+        "hosts": child.find('hosts').text,
+        "in_use": child.find('in_use').text,
+        } for child in targets]
+
+
         port_lists = gvm.get_port_lists()
         port_lists = ET.fromstring(port_lists)
         port_lists = port_lists.findall("port_list")
         port_lists_id = [{'name': child.find(
             'name').text, "id": child.attrib['id']} for child in port_lists]
-        return render(request, "gvm/target.html", {"port_lists": port_lists_id})
+
+
+        return render(request, "gvm/target.html", 
+        {"port_lists": port_lists_id, "targets":targets})
 
     def post(self, request):
         print(request.POST)
         name = request.POST.get('name', None)
-        comment = request.POST.get("name", "")
+        comment = request.POST.get("comment", "")
         hosts = request.POST.get('hosts', None)
         port_lists = request.POST.get("port_lists", None)
         if (name or hosts) is None:
@@ -43,12 +60,13 @@ class Target(View):
             return render(request, "gvm/target.html", {"port_lists": port_lists_id})
         gvm.create_target(hosts=[hosts], comment=comment,
                           name=name, port_list_id=port_lists)
-        targets = gvm.get_targets()
-        targets = ET.fromstring(targets).findall('target')
-        targets = [{"name": child.find(
-            'name').text, "id": child.attrib['id']} for child in targets]
-        return render(request, "gvm/target.html", {"targets": targets})
+        return self.get(request)
 
+    def delete(self, request, id):
+
+        gvm.delete_target(id)
+
+        return self.get(request)
 
 class Task(View):
     def get(self, request, id):
@@ -67,8 +85,8 @@ class Tasks(View):
 class Result(View):
     def get(self, request, id):
         response = gvm.get_result(id)
-        # response = xmltodict.parse(response)
-        print(type(response))
+        response = xmltodict.parse(response)
+        response = json.loads(json.dumps(response))
         # response = response["get_results_response"]
 
         return render(request, 'gvm/result.html', {'response': response})
