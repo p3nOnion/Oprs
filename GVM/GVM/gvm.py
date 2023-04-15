@@ -38,7 +38,12 @@ with Gmp(connection=connection) as gmp:
         gmp.authenticate(username, password)
         response = gmp.get_task(task_id=id)
         return response
-
+    def start_task(id):
+        gmp.authenticate(username, password)
+        return gmp.start_task(id)
+    def stop_task(id):
+        gmp.authenticate(username, password)
+        return gmp.stop_task(id)
     def get_results():
         gmp.authenticate(username, password)
         response = gmp.get_results()
@@ -69,8 +74,20 @@ with Gmp(connection=connection) as gmp:
         gmp.authenticate(username, password)
         response = gmp.get_port_list(id=id)
         return response
+    def get_scanners():
+        gmp.authenticate(username, password)
+        response= gmp.get_scanners()
+        return response
+    def get_scan_configs():
+        gmp.authenticate(username, password)
+        response= gmp.get_scan_configs()
+        return response
 
     def create_target(name, hosts, comment, port_list_id):
         gmp.authenticate(username, password)
         gmp.create_target(name=name, hosts=hosts,
                           comment=comment, port_list_id=port_list_id)
+        
+    def create_task(name, config_id, target_id, scanner_id, comment):
+        gmp.authenticate(username, password)
+        gmp.create_task(name=name, config_id=config_id, target_id=target_id, scanner_id=scanner_id, comment=comment)

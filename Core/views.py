@@ -128,7 +128,7 @@ class Auto(View):
         exploits = [child["fullname"] for child in results]
         exploits.insert(0, '')
         host = et.find('host').text
-        return render(request, "dashboard/auto.html", {"username": username, "exploits": exploits, 'host':host})
+        return render(request, "dashboard/auto.html", {"username": username, "exploits": exploits, 'host':host, 'name':name})
 
 
 class Main(View):
