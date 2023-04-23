@@ -33,9 +33,9 @@
         <input type="text" id="hostname" name="ip" value="{{host}}" required>
         <br>
         <label for="exploit">Exploit :</label>
-        <select id="exploit" name="exploit">
+        <select type="text" id="exploit" name="exploit" placeholder="select module" required>
             {% for exploit in exploits %}
-            <option value="{{ exploit }}">{{ exploit }}</option>
+            <option value="{{ exploit.module }}">{{ exploit.name}}</option>
             {% endfor %}
         </select>
         <br>
@@ -46,6 +46,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </option>
         </datalist>
+        <input name="rport" type="text" value="{{port}}" hidden>
         {% csrf_token %}
         <br>
         <input type="submit" name="submit">
@@ -81,7 +82,7 @@
 
     optionA.addEventListener("change", function () {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/oprs/exploit/?module=" + optionA.value);
+        xhr.open("GET", "/opra/exploit/?module=" + optionA.value);
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         xhr.onload = function () {
             if (xhr.status === 200) {

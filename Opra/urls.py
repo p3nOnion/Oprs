@@ -21,7 +21,7 @@ import Core.views  as core
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',login_required(core.Main.as_view()) ,name='Core'),
-    path('oprs/', include('Core.urls'), name='Core'),
+    path('opra/', include('Core.urls'), name='Core'),
     path('accounts/', include('Users.urls'), name='Users'),
     path('terminal/', include('Terminal.urls'), name='Terminal'),
     path('gvm/', include('GVM.urls'), name='Gvm'),

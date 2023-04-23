@@ -13,12 +13,18 @@
         {% if user.is_authenticated %}
         <ul class="nav">
 
-            <li class="active ">
+            <!-- <li class="active ">
                 <a href="/gvm">
                     <i class="tim-icons icon-world"></i>
                     <p id="icon">GVM</p>
                 </a>
 
+            </li> -->
+            <li class="active ">
+                <a href="/gvm/target">
+                    <i class="tim-icons icon-zoom-split"></i>
+                    <p id="icon">Targets</p>
+                </a>
             </li>
 
             <li class="active ">
@@ -28,12 +34,7 @@
                 </a>
             </li>
 
-            <li class="active ">
-                <a href="/gvm/target">
-                    <i class="tim-icons icon-zoom-split"></i>
-                    <p id="icon">Targets</p>
-                </a>
-            </li>
+
 
             <li class="active ">
                 <a href="/">
@@ -61,10 +62,16 @@
                     </ul>
                 </li>
             </div>
+            <li class="active ">
+                <a href="/opra/report_metasploit/">
+                    <i class="tim-icons icon-world"></i>
+                    <p id="icon">Report Metasploit</p>
+                </a>
+            </li>
 
-           
 
-           
+
+
 
 
 
@@ -72,11 +79,11 @@
         </ul>
         <script>
             async function sessions() {
-                let data = await fetch("/oprs/sessions/");
+                let data = await fetch("/opra/sessions/");
                 var json = await data.json();
                 let text = ""
                 for (let i in json['sessions']) {
-                    text += "<li><a href=\"/oprs/sessions/" + eval(Number(i)) + " \"target=\"_blank\" \">" + json['sessions'][i]['session_host'] + " type:" + json['sessions'][i]['type'] + "</a></li>"
+                    text += "<li><a href=\"/opra/sessions/" + eval(Number(i)) + " \"target=\"_blank\" \">" + json['sessions'][i]['session_host'] + " type:" + json['sessions'][i]['type'] + "</a></li>"
                 }
                 document.getElementById('session').innerHTML = text;
             }

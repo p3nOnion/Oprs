@@ -47,6 +47,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
+        
 class Console(WebsocketConsumer):
     message = {'status': 0, 'message': None}
 

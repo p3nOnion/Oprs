@@ -38,10 +38,11 @@
         <input type="text" id="hostname" name="ip" value="" required placeholder="hostname">
         <br>
         <label for="exploit">Exploit :</label>
-        <input type="text" id="exploit" name="exploit" required list="exploit-options" size="80">
+        <input type="text" id="exploit" name="exploit" placeholder="select module" required list="exploit-options"
+            size="80">
         <datalist id="exploit-options">
             {% for exploit in exploits %}
-            <option value="{{ exploit }}">{{ exploit }}</option>
+            <option value="{{ exploit.module }}">{{ exploit.name}}</option>
             {% endfor %}
         </datalist>
         <br>
@@ -56,26 +57,18 @@
         <br>
         <input type="submit" name="submit">
     </form>
-</div>
-<div>
-    <div class="container">
-        <h2>OUTPUT</h2>
-        <div class="" style="width: 800px; height: 500px">
+    <div>
+        <div class="container">
+            <h2>OUTPUT</h2>
+            <div class="" style="width: 800px; height: 500px">
 
-            <label for="chatLog"><label id="id"></label></label>
-            <textarea style="width: 800px; height: 500px" class="bg-dark text-white" id="chatLog" readonly></textarea>
-
-            {# <div class="input-group">#}
-                {# <input type="text" class="form-control bg-dark text-white" id="chatMessageInput"
-                    placeholder="Enter your chat message">#}
-                {# <div class="input-group-append">#}
-                    {# <button class="btn btn-success" id="chatMessageSend" type="button">Send</button>#}
-                    {# </div>#}
-                {# </div>#}
+                <label for="chatLog"><label id="id"></label></label>
+                <textarea style="width: 800px; height: 500px" class="bg-dark text-white" id="chatLog"
+                    readonly></textarea>
+            </div>
+            {{ id|json_script:"roomName" }}
         </div>
-        {{ id|json_script:"roomName" }}
     </div>
-</div>
 </div>
 {% endblock content %}
 
@@ -86,20 +79,24 @@
     var optionB = document.getElementById("payload-options");
 
     optionA.addEventListener("change", function () {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/oprs/exploit/?module=" + optionA.value);
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                var options = JSON.parse(xhr.responseText)['payloads'];
-                console.log(options)
-                optionB.innerHTML = "";
-                for (var i = 0; i < options.length; i++) {
-                    optionB.innerHTML += "<option value='" + options[i] + "'>" + options[i] + "</option>";
+        if (optionA.value.includes("auxiliaty")) {
+            optionB.disabled = true;
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/opra/exploit/?module=" + optionA.value);
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var options = JSON.parse(xhr.responseText)['payloads'];
+                    console.log(options)
+                    optionB.innerHTML = "";
+                    for (var i = 0; i < options.length; i++) {
+                        optionB.innerHTML += "<option value='" + options[i] + "'>" + options[i] + "</option>";
+                    }
                 }
-            }
-        };
-        xhr.send();
+            };
+            xhr.send();
+        }
     });
 
     console.log("Sanity check from room.js.");
@@ -121,26 +118,26 @@
     // };
     console.log(socket)
     // focus 'chatMessageInput' when user opens the page
-    chatMessageInput.focus();
+    // chatMessageInput.focus();
 
     // submit if the user presses the enter key
-    chatMessageInput.onkeyup = function (e) {
-        if (e.keyCode === 13) {  // enter key
-            chatMessageSend.click();
-        }
-    };
+    // chatMessageInput.onkeyup = function (e) {
+    //     if (e.keyCode === 13) {  // enter key
+    //         chatMessageSend.click();
+    //     }
+    // };
     // clear the 'chatMessageInput' and forward the message
 
-    chatMessageSend.onclick = function () {
-        if (chatMessageInput.value.length === 0) return;
-        if (chatMessageInput.value === "clear") chatLog.value = "";
-        // TODO: forward the message to the WebSocket
-        else {
-            chatLog.value += ">> " + chatMessageInput.value + "\n";
-            socket.send(JSON.stringify({ 'message': chatMessageInput.value }));
-        }
-        chatMessageInput.value = "";
-    };
+    // chatMessageSend.onclick = function () {
+    //     if (chatMessageInput.value.length === 0) return;
+    //     if (chatMessageInput.value === "clear") chatLog.value = "";
+    //     // TODO: forward the message to the WebSocket
+    //     else {
+    //         chatLog.value += ">> " + chatMessageInput.value + "\n";
+    //         socket.send(JSON.stringify({ 'message': chatMessageInput.value }));
+    //     }
+    //     chatMessageInput.value = "";
+    // };
     function validateForm(event) {
         event.preventDefault();
         const form = document.querySelector('#form')

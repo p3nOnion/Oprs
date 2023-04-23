@@ -3,7 +3,7 @@ from django.views.generic.base import View
 import xmltodict
 import json
 import GVM.GVM.gvm as gvm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import xmltodict
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
@@ -26,14 +26,23 @@ class ActionTask(View):
             response = gvm.get_task(id=id)
             response= ET.fromstring(response)
             status = response.find('task').find("status").text
-            return HttpResponse(status)
+            return  JsonResponse({"status":status}, safe=False)
         elif action == "start":
+            print('action',action,id)
             response=gvm.start_task(id=id)
+            print('start scan',response)
             return HttpResponse(response)
         elif action=="stop":
             response=gvm.stop_task(id=id)
             return HttpResponse(response)
         return HttpResponse(status=404)
+
+    def delete(self, request, action, id):
+
+        gvm.delete_task(id)
+        print(action)
+
+        return HttpResponse(status=200)
 
 class TaskDetail(View):
     def get(self, request):
@@ -53,21 +62,24 @@ class TaskDetail(View):
         tasks = ET.fromstring(response).findall('task')
         #  them target
         #  them status
-        for child in tasks:
-            print([x.find('report').attrib for x in child.findall('last_report') if int(child.find('report_count').text) > 0])
-        tasks = [{"name": child.find("name").text, "id": child.attrib['id'],"comment":child.find("comment").text,"scanner":child.find('scanner').find('name').text,"config":child.find("config").find('name').text, 'status':child.find("status").text, "report": "None" if len([x.find('report') for x in child.findall('last_report') if int(child.find('report_count').text) > 0])==0 else [x.find('report').attrib['id'] for x in child.findall('last_report') if int(child.find('report_count').text)][0] }
+        # for child in tasks:
+        #     print([x.find('report') for x in child.findall('last_report') if int(child.find('report_count').text) > 0])
+        tasks = [{"name": child.find("name").text, "id": child.attrib['id'],"comment":child.find("comment").text,"target": child.find('target').find('name').text,"scanner":child.find('scanner').find('name').text,"config":child.find("config").find('name').text, 'status':child.find("status").text, "report": "None" if len([x.find('report') for x in child.findall('last_report') if int(child.find('report_count').text) > 0])==0 else [x.find('report').attrib['id'] for x in child.findall('last_report') if int(child.find('report_count').text)][0] }
                    for child in tasks]
-        print(tasks)
+        # print(tasks)
         return render(request, "gvm/task.html",{'scanner_lists':scancofig,"scanners":scanners, "targets":targets, "tasks":tasks})
     def post(self, request):
         name=request.POST.get("name",None)
-        config_id= request.POST.get("name",None)
+        config_id= request.POST.get("config_id",None)
         target_id=request.POST.get("target_id",None)
         scanner_id=request.POST.get("scanner_id",None)
         comment=request.POST.get("comment",None)
+        print(name,config_id, target_id,scanner_id)
         if (config_id and target_id and scanner_id) is not None:
+            print(1)
             gvm.create_task(name, config_id, target_id, scanner_id, comment)
         return render(request, "gvm/task.html")
+
 class Target(View):
     def get(self, request):
         targets = gvm.get_targets()
@@ -92,7 +104,6 @@ class Target(View):
         {"port_lists": port_lists_id, "targets":targets})
 
     def post(self, request):
-        print(request.POST)
         name = request.POST.get('name', None)
         comment = request.POST.get("comment", "")
         hosts = request.POST.get('hosts', None)
@@ -109,7 +120,6 @@ class Target(View):
         return self.get(request)
 
     def delete(self, request, id):
-
         gvm.delete_target(id)
 
         return self.get(request)
@@ -165,4 +175,30 @@ class GetResultByTask(View):
 class Report(View):
     def get(self, request, id):
         response = gvm.get_report(id=id)
-        return render(request, "gvm/report.html", {"response": response})
+        task_name = ET.fromstring(response).find('report').find('task').find("name").text
+        response = ET.fromstring(response).find('report').find(
+            'report').find('results').findall('result')
+        response = [
+                {
+                    "id":child.attrib['id'],
+                    "name":child.find('name').text, 
+                    "threat":child.find('threat').text,
+                    "severity":child.find("severity").text,  
+                    "host":child.find("host").text, 
+                    "port":child.find("port").text, 
+                    # "detection":[
+                    #                 {
+                    #                 "id":child.find("detection").find("result").attrib['id'] if child.find('detection') is not None else None,
+                    #                 "details":{[
+                    #                                 {'name':x.find("result").find("details").findall('detail').find("name") if child.find('detection') is not None else None, 
+                    #                                 "value":x.find("result").find("details").findall('detail').find("value") if child.find('detection') is not None else None } for x in child.find("detection")
+                    #                 ]
+                                                    
+                    #                         }
+                    #                 }
+                    #             ]
+                    "description":child.find("description").text, 
+                }
+                for child in response
+                ]
+        return render(request, "gvm/report.html", {"response": response,"task_name":task_name})

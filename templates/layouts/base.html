@@ -43,6 +43,7 @@
       font-weight: bold;
       color: wheat;
     }
+
     .target-item {
       border: '1px solid white';
     }
@@ -68,7 +69,7 @@
 
 </head>
 
-<body class="">
+<body>
   <div class="wrapper">
 
     {% include 'includes/sidebar.html' %}
@@ -79,7 +80,8 @@
 
       <div class="content">
 
-        {% block content %}{% endblock content %}
+        {% block content %}
+        {% endblock content %}
 
       </div>
 
