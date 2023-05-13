@@ -121,7 +121,10 @@
     setInterval(function () {
         autoLoad();
     }, 10000);
-    function autoLoad() {
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    async function autoLoad() {
 
         var divs = document.querySelectorAll('.status');
         for (var i = 0; i < divs.length; i++) {
@@ -132,7 +135,7 @@
                     status.textContent = data['status'];
                 });
 
-            // }, 500);
+            await sleep(1000);
         }
     }
 

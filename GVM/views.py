@@ -8,7 +8,7 @@ import xmltodict
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 # Create your views here.
-
+import time
 
 class Index(View):
     def get(self, request):
@@ -26,6 +26,7 @@ class ActionTask(View):
             response = gvm.get_task(id=id)
             response= ET.fromstring(response)
             status = response.find('task').find("status").text
+            time.sleep(2)
             return  JsonResponse({"status":status}, safe=False)
         elif action == "start":
             print('action',action,id)
@@ -59,6 +60,7 @@ class TaskDetail(View):
         targets = [{"name": child.find('name').text, "id": child.attrib['id']} for child in targets]
 
         response = gvm.get_tasks()
+        print(response)
         tasks = ET.fromstring(response).findall('task')
         #  them target
         #  them status
@@ -178,6 +180,19 @@ class Report(View):
         task_name = ET.fromstring(response).find('report').find('task').find("name").text
         response = ET.fromstring(response).find('report').find(
             'report').find('results').findall('result')
+        all=0
+        high =0
+        medium =0
+        low =0
+        for child in response:
+            all+=1
+            text = child.find('threat').text
+            if text=="High":
+                high+=1
+            elif text == "Medium":
+                medium+=1
+            elif text == "Low":
+                low+=1
         response = [
                 {
                     "id":child.attrib['id'],
@@ -201,4 +216,4 @@ class Report(View):
                 }
                 for child in response
                 ]
-        return render(request, "gvm/report.html", {"response": response,"task_name":task_name})
+        return render(request, "gvm/report.html", {"response": response,"task_name":task_name, "counts":{"All":all, "High":high, "Medium": medium, "Low":low}})

@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 import Core.views  as core
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',login_required(core.Main.as_view()) ,name='Core'),

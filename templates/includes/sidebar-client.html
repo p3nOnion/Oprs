@@ -10,7 +10,7 @@
         {% if user.is_authenticated %}
         <ul class="nav">
             <li class="active ">
-                <a href="/oprs/sessions/{{ id }}">
+                <a href="/opra/sessions/{{ id }}">
                     <i class="tim-icons icon-chart-pie-36"></i>
                     <p>Client Info</p>
                 </a>
@@ -25,7 +25,7 @@
             {% if session.type == "shell" %}
             <li class="active ">
                 <i class="tim-icons icon-compass-05"></i>
-                <a href="/oprs/meterpreter/{{ id }}">shell_to_meterpreter</a>
+                <a href="/opra/meterpreter/{{ id }}">shell_to_meterpreter</a>
             </li>
             {% endif %}
         </ul>

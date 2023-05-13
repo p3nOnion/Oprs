@@ -87,7 +87,7 @@ class Session(WebsocketConsumer):
 
     def disconnect(self, code):
         # self.session.write("background")
-        del self.session
+        # del self.session
         pass
     def receive(self, text_data=None, bytes_data=None):
 

@@ -47,6 +47,8 @@
             </option>
         </datalist>
         <input name="rport" type="text" value="{{port}}" hidden>
+        <label for="targetURI">targetURI :</label>
+        <input name="targetURI" id="targetURI" type="text" value="{{targetURI}}">
         {% csrf_token %}
         <br>
         <input type="submit" name="submit">
@@ -92,6 +94,8 @@
                 for (var i = 0; i < options.length; i++) {
                     optionB.innerHTML += "<option value='" + options[i] + "'>" + options[i] + "</option>";
                 }
+                required = JSON.parse(xhr.responseText)['required'];
+                console.log(required)
             }
         };
         xhr.send();
